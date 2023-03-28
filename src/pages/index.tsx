@@ -1,6 +1,24 @@
 import Head from "next/head";
+import { useState } from "react";
+import { Listbox } from "@headlessui/react";
+
+const region = [
+  { id: "na1", name: "North America", unavailable: false },
+  { id: "euw1", name: "Europe West", unavailable: false },
+  { id: "eun1", name: "Europe Nordic & East", unavailable: false },
+  { id: "kr", name: "Korea", unavailable: false },
+  { id: "br1", name: "Brazil", unavailable: false },
+  { id: "jp1", name: "Japan", unavailable: false },
+  { id: "ru", name: "Russia", unavailable: false },
+  { id: "oc1", name: "Oceania", unavailable: false },
+  { id: "tr1", name: "Türkiye", unavailable: false },
+  { id: "la1", name: "LAN", unavailable: false },
+  { id: "la2", name: "LAS", unavailable: false }
+];
 
 export default function Home() {
+  const [selected, setSelected] = useState(region[0]);
+
   return (
     <>
       <Head>
@@ -18,13 +36,72 @@ export default function Home() {
           href="/favicon.ico"
         />
       </Head>
-      <div className="h-screen w-screen bg-[url('../assets/images/homepage-background-image.jpg')] bg-cover bg-center bg-no-repeat">
-        <div className="flex h-full w-full items-center justify-center bg-black bg-opacity-50">
-          <section className="bg-white/50 p-2">
-            <h1 className="text-center text-7xl font-bold text-white">
+      <div className="h-screen w-screen overflow-hidden bg-[url('../assets/images/homepage-background-image.jpg')] bg-cover bg-center bg-no-repeat">
+        <div className="flex h-full w-full items-center justify-center bg-white bg-opacity-50">
+          <section>
+            <h1 className="mx-auto mb-5 w-[450px] rounded-xl border-2 border-violet-800 bg-violet-300/70 p-3 text-center text-7xl font-bold text-violet-700">
               LoL Nexus
             </h1>
-            <div></div>
+
+            <form className="flex h-[70px] w-[800px] rounded-full border border-gray-300 bg-gray-100 px-10 drop-shadow">
+              {/* Region Select */}
+              <div className="relative top-2 flex flex-col">
+                <p className="font-bold text-gray-700">Region</p>
+                <Listbox
+                  value={selected}
+                  onChange={setSelected}
+                >
+                  <Listbox.Button className="flex w-[195px] justify-between rounded py-1 text-left text-gray-500">
+                    {selected.name}
+                    <span>▼</span>
+                  </Listbox.Button>
+                  <Listbox.Options className="my-1 rounded border border-gray-300 bg-gray-100 px-2 py-1 drop-shadow">
+                    {region.map(region => (
+                      <Listbox.Option
+                        key={region.id}
+                        value={region}
+                        disabled={region.unavailable}
+                        className="cursor-pointer border border-transparent border-b-gray-300 px-1 text-gray-500 last:border-b-transparent hover:rounded hover:bg-gray-200"
+                      >
+                        {region.name}
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </Listbox>
+              </div>
+
+              <div className="my-auto mx-4 h-10 w-[2px] bg-gray-300" />
+
+              {/* Summoner Name Input */}
+              <div className="relative top-2 flex flex-col">
+                <p className="font-bold text-gray-700">Search</p>
+                <input
+                  className="w-[400px] rounded bg-transparent py-1 text-left text-gray-700 outline-0"
+                  placeholder="Summoner Name..."
+                />
+              </div>
+
+              {/* Submit Button */}
+              <button
+                className="relative left-[41px] flex h-full w-[100px] items-center justify-center rounded-full bg-violet-300/70 text-violet-700 drop-shadow hover:bg-violet-300/100"
+                type="submit"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  />
+                </svg>
+              </button>
+            </form>
           </section>
         </div>
       </div>
