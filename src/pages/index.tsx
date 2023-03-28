@@ -18,7 +18,16 @@ export default function Home() {
           href="/favicon.ico"
         />
       </Head>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <div className="h-screen w-screen bg-[url('../assets/images/homepage-background-image.jpg')] bg-cover bg-center bg-no-repeat">
+        <div className="flex h-full w-full items-center justify-center bg-black bg-opacity-50">
+          <section className="bg-white/50 p-2">
+            <h1 className="text-center text-7xl font-bold text-white">
+              LoL Nexus
+            </h1>
+            <div></div>
+          </section>
+        </div>
+      </div>
     </>
   );
 }
