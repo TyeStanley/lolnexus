@@ -1,23 +1,35 @@
 import Head from "next/head";
 import { useState } from "react";
 import { Listbox } from "@headlessui/react";
+import { useRouter } from "next/router";
 
 const region = [
-  { id: "na1", name: "North America", unavailable: false },
-  { id: "euw1", name: "Europe West", unavailable: false },
-  { id: "eun1", name: "Europe Nordic & East", unavailable: false },
-  { id: "kr", name: "Korea", unavailable: false },
-  { id: "br1", name: "Brazil", unavailable: false },
-  { id: "jp1", name: "Japan", unavailable: false },
-  { id: "ru", name: "Russia", unavailable: false },
-  { id: "oc1", name: "Oceania", unavailable: false },
-  { id: "tr1", name: "Türkiye", unavailable: false },
-  { id: "la1", name: "LAN", unavailable: false },
-  { id: "la2", name: "LAS", unavailable: false }
+  { id: "na1", url: "na", name: "North America", unavailable: false },
+  { id: "euw1", url: "euw", name: "Europe West", unavailable: false },
+  { id: "eun1", url: "eune", name: "Europe Nordic & East", unavailable: false },
+  { id: "kr", url: "kr", name: "Korea", unavailable: false },
+  { id: "br1", url: "br", name: "Brazil", unavailable: false },
+  { id: "jp1", url: "jp", name: "Japan", unavailable: false },
+  { id: "ru", url: "ru", name: "Russia", unavailable: false },
+  { id: "oc1", url: "oce", name: "Oceania", unavailable: false },
+  { id: "tr1", url: "tr", name: "Türkiye", unavailable: false },
+  { id: "la1", url: "lan", name: "LAN", unavailable: false },
+  { id: "la2", url: "las", name: "LAS", unavailable: false }
 ];
 
 export default function Home() {
   const [selected, setSelected] = useState(region[0]);
+  const [summonerName, setSummonerName] = useState("");
+  const router = useRouter();
+
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    router.push({
+      pathname: `/summoners/${selected.url}/${summonerName}`,
+      query: { regionId: selected.id, player: summonerName }
+    });
+  };
 
   return (
     <>
@@ -43,7 +55,10 @@ export default function Home() {
               LoL Nexus
             </h1>
 
-            <form className="flex h-[70px] w-[800px] rounded-full border border-gray-300 bg-gray-100 px-10 drop-shadow">
+            <form
+              className="flex h-[70px] w-[800px] rounded-full border border-gray-300 bg-gray-100 px-10 drop-shadow"
+              onSubmit={handleFormSubmit}
+            >
               {/* Region Select */}
               <div className="relative top-2 flex flex-col">
                 <p className="font-bold text-gray-700">Region</p>
@@ -78,6 +93,7 @@ export default function Home() {
                 <input
                   className="w-[400px] rounded bg-transparent py-1 text-left text-gray-700 outline-0"
                   placeholder="Summoner Name..."
+                  onChange={e => setSummonerName(e.target.value)}
                 />
               </div>
 
