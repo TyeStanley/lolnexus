@@ -19,6 +19,12 @@ export const getServerSideProps: GetServerSideProps = async context => {
   );
   const basicPlayerInfo = await res.json();
 
+  // gets extra information about the player.. like their rank, wins, losses, etc.
+  const res2 = await fetch(
+    `https://${regionId}.api.riotgames.com/lol/league/v4/entries/by-summoner/${basicPlayerInfo.id}?api_key=${process.env.RIOT_API_KEY}`
+  );
+  const extraPlayerInfo = await res2.json();
+
   let route = "";
   switch (regionId) {
     case "na1":
@@ -42,10 +48,10 @@ export const getServerSideProps: GetServerSideProps = async context => {
   }
 
   // gets the last x matches the player played
-  const res2 = await fetch(
+  const res3 = await fetch(
     `https://${route}.api.riotgames.com/lol/match/v5/matches/by-puuid/${basicPlayerInfo.puuid}/ids?count=5&api_key=${process.env.RIOT_API_KEY}`
   );
-  const xMatchesId = (await res2.json()) as string[];
+  const xMatchesId = (await res3.json()) as string[];
 
   const matches = await Promise.all(
     xMatchesId.map(async matchId => {
@@ -61,6 +67,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
   return {
     props: {
       basicPlayerInfo,
+      extraPlayerInfo,
       matches
     }
   };
