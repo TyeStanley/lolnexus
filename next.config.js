@@ -7,7 +7,7 @@ const nextConfig = {
         protocol: "http",
         hostname: "ddragon.leagueoflegends.com",
         port: "",
-        pathname: "/cdn/13.6.1/img/profileicon/**"
+        pathname: "/cdn/**"
       }
     ]
   }

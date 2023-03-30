@@ -10,6 +10,7 @@ type Props = {
     name: string;
     profileIconId: number;
     summonerLevel: number;
+    puuid: string;
   };
   extraPlayerInfo: [
     {
@@ -20,13 +21,35 @@ type Props = {
       losses: number;
     }
   ];
-  matches: Object[];
+  matches: [
+    {
+      info: {
+        gameCreation: number;
+        gameDuration: number;
+        gameMode: string;
+        gameStartTimestamp: number;
+        gameEndTimestamp: number;
+        participants: [
+          {
+            championName: string;
+            championLevel: number;
+            summonerName: string;
+            kills: number;
+            deaths: number;
+            assists: number;
+            profileIcon: number;
+            win: boolean;
+          }
+        ];
+      };
+    }
+  ];
 };
 
 export default function Player(props: Props) {
   const { basicPlayerInfo, extraPlayerInfo, matches } = props;
 
-  console.log(extraPlayerInfo);
+  console.log(matches);
 
   function winrate() {
     return (
@@ -34,6 +57,46 @@ export default function Player(props: Props) {
         (extraPlayerInfo[0].wins + extraPlayerInfo[0].losses)) *
       100
     ).toFixed(0);
+  }
+
+  function findPlayer(participants: any) {
+    const player = participants.find(
+      (participant: any) => participant.puuid === basicPlayerInfo.puuid
+    );
+
+    return player;
+  }
+
+  function gameEndedAgo(time: number) {
+    const now = new Date().getTime();
+    const difference = now - time;
+
+    const seconds = difference / 1000;
+    const minutes = seconds / 60;
+    const hours = minutes / 60;
+    const days = hours / 24;
+
+    if (seconds >= 0 && seconds < 60) {
+      return `${Math.floor(seconds)} seconds ago`;
+    } else if (minutes >= 1 && minutes < 60) {
+      return `${Math.floor(minutes)} minutes ago`;
+    } else if (hours >= 1 && hours < 2) {
+      return `an hour ago`;
+    } else if (hours >= 2 && hours < 24) {
+      return `${Math.floor(hours)} hours ago`;
+    } else if (days >= 1 && days < 2) {
+      return `a day ago`;
+    } else if (days >= 2) {
+      return `${Math.floor(days)} days ago`;
+    }
+  }
+
+  function gameDuration(start: number, end: number) {
+    const gameLength = end - start;
+    const lengthInMinutes = Math.floor(gameLength / 1000 / 60);
+    const lengthInSeconds = Math.floor((gameLength / 1000) % 60);
+
+    return `${lengthInMinutes}m ${lengthInSeconds}s`;
   }
 
   return (
@@ -54,9 +117,9 @@ export default function Player(props: Props) {
         />
       </Head>
       <div className="h-screen w-screen overflow-hidden bg-[url('../assets/images/homepage-background-image.jpg')] bg-cover bg-center bg-no-repeat">
-        <div className="flex h-full w-full justify-center bg-white bg-opacity-50">
-          <section className="flex h-[140px] border border-white bg-violet-500/50 text-gray-100">
-            <div className="m-4">
+        <div className="flex h-full w-full flex-col items-center bg-white bg-opacity-50">
+          <section className="mb-10 flex h-[140px] rounded border border-white bg-violet-500/50 text-gray-100">
+            <div className="m-4 mt-4">
               <Image
                 src={`http://ddragon.leagueoflegends.com/cdn/${patch}/img/profileicon/${basicPlayerInfo.profileIconId}.png`}
                 width={100}
@@ -72,8 +135,50 @@ export default function Player(props: Props) {
               <p>{basicPlayerInfo.name}</p>
               <p>{`${extraPlayerInfo[0].tier} ${extraPlayerInfo[0].rank} ${extraPlayerInfo[0].leaguePoints} LP`}</p>
               <p>{`${extraPlayerInfo[0].wins}W ${extraPlayerInfo[0].losses}L`}</p>
-              <p>Win Rate {winrate()}%</p>
+              <p>{`Win Rate ${winrate()}%`}</p>
             </div>
+          </section>
+          <section className="border border-white bg-violet-500/50 p-2">
+            {matches.map((match, index) => {
+              const player = findPlayer(match.info.participants);
+              const timeAgo = gameEndedAgo(match.info.gameEndTimestamp);
+              const isWin = player.win ? "Victory" : "Defeat";
+
+              const gameLength = gameDuration(
+                match.info.gameStartTimestamp,
+                match.info.gameEndTimestamp
+              );
+
+              console.log(player);
+              return (
+                <div
+                  key={index}
+                  className="mb-2 flex bg-blue-300"
+                >
+                  <div className="p-2">
+                    <p>{match.info.gameMode}</p>
+                    <p>{timeAgo}</p>
+                    <div className="h-[1px] w-11 bg-gray-100" />
+                    <p>{isWin}</p>
+                    <p>{gameLength}</p>
+                  </div>
+
+                  <div className="p-2">
+                    <div className="flex">
+                      <Image
+                        src={`http://ddragon.leagueoflegends.com/cdn/${patch}/img/champion/${player.championName}.png`}
+                        width={50}
+                        height={50}
+                        alt="Champion Icon"
+                      />
+                      <div className=""></div>
+                    </div>
+
+                    <div></div>
+                  </div>
+                </div>
+              );
+            })}
           </section>
         </div>
       </div>
