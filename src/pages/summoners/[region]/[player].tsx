@@ -99,6 +99,118 @@ export default function Player(props: Props) {
     return `${lengthInMinutes}m ${lengthInSeconds}s`;
   }
 
+  function getSummonerSpell(spell: number) {
+    switch (spell) {
+      case 1:
+        return "SummonerBoost";
+      case 3:
+        return "SummonerExhaust";
+      case 4:
+        return "SummonerFlash";
+      case 6:
+        return "SummonerHaste";
+      case 7:
+        return "SummonerHeal";
+      case 11:
+        return "SummonerSmite";
+      case 12:
+        return "SummonerTeleport";
+      case 13:
+        return "SummonerMana";
+      case 14:
+        return "SummonerDot";
+      case 21:
+        return "SummonerBarrier";
+      case 30:
+        return "SummonerPoroRecall";
+      case 31:
+        return "SummonerPoroThrow";
+      case 32:
+        return "SummonerSnowball";
+      case 39:
+        return "SummonerSnowURFSnowball_Mark";
+      default:
+        return "SummonerBoost";
+    }
+  }
+
+  function getRunes(rune: number) {
+    let runeName = "";
+    switch (rune) {
+      case 8000:
+        runeName = "7201_Precision";
+        break;
+      case 8100:
+        runeName = "7200_Domination";
+        break;
+      case 8200:
+        runeName = "7202_Sorcery";
+        break;
+      case 8300:
+        runeName = "7203_Whimsy";
+        break;
+      case 8400:
+        runeName = "7204_Resolve";
+        break;
+      case 8112:
+        runeName = "Domination/Electrocute/Electrocute";
+        break;
+      case 8124:
+        runeName = "Domination/Predator/Predator";
+        break;
+      case 8128:
+        runeName = "Domination/DarkHarvest/DarkHarvest";
+        break;
+      case 9923:
+        runeName = "Domination/HailOfBlades/HailOfBlades";
+        break;
+      case 8351:
+        runeName = "Inspiration/GlacialAugment/GlacialAugment";
+        break;
+      case 8360:
+        runeName = "Inspiration/UnsealedSpellbook/UnsealedSpellbook";
+        break;
+      case 8369:
+        runeName = "Inspiration/FirstStrike/FirstStrike";
+        break;
+      case 8005:
+        runeName = "Precision/PressTheAttack/PressTheAttack";
+        break;
+      case 8008:
+        runeName = "Precision/LethalTempo/LethalTempoTemp";
+        break;
+      case 8021:
+        runeName = "Precision/FleetFootwork/FleetFootwork";
+        break;
+      case 8010:
+        runeName = "Precision/Conqueror/Conqueror";
+        break;
+      case 8437:
+        runeName = "Resolve/GraspOfTheUndying/GraspOfTheUndying";
+        break;
+      case 8439:
+        runeName = "Resolve/VeteranAftershock/VeteranAftershock";
+        break;
+      case 8465:
+        runeName = "Resolve/Guardian/Guardian";
+        break;
+      case 8214:
+        runeName = "Sorcery/SummonAery/SummonAery";
+        break;
+      case 8229:
+        runeName = "Sorcery/ArcaneComet/ArcaneComet";
+        break;
+      case 8230:
+        runeName = "Sorcery/PhaseRush/PhaseRush";
+        break;
+      default:
+        runeName = "RunesIcon";
+        break;
+    }
+
+    return runeName;
+  }
+
   return (
     <>
       <Head>
@@ -149,13 +261,16 @@ export default function Player(props: Props) {
                 match.info.gameEndTimestamp
               );
 
-              console.log(player);
+              const runeSelection = player.perks.styles;
+              const rune1 = getRunes(runeSelection[0].selections[0].perk);
+              const rune2 = getRunes(runeSelection[1].style);
+
               return (
                 <div
                   key={index}
                   className="mb-2 flex bg-blue-300"
                 >
-                  <div className="p-2">
+                  <div className="w-[150px] p-2">
                     <p>{match.info.gameMode}</p>
                     <p>{timeAgo}</p>
                     <div className="h-[1px] w-11 bg-gray-100" />
@@ -170,8 +285,51 @@ export default function Player(props: Props) {
                         width={50}
                         height={50}
                         alt="Champion Icon"
+                        className="rounded-full shadow"
                       />
-                      <div className=""></div>
+                      <span className="relative top-[30px] right-5 flex h-5 w-5 items-center justify-center rounded-full bg-slate-700 text-center text-xs text-white">
+                        {player.champLevel}
+                      </span>
+
+                      <div className="relative right-4 flex">
+                        <section>
+                          <Image
+                            src={`http://ddragon.leagueoflegends.com/cdn/13.6.1/img/spell/${getSummonerSpell(
+                              player.summoner1Id
+                            )}.png`}
+                            width={22.5}
+                            height={22.5}
+                            alt="Summoner Spell 1"
+                            className="mb-1 rounded shadow"
+                          />
+                          <Image
+                            src={`http://ddragon.leagueoflegends.com/cdn/13.6.1/img/spell/${getSummonerSpell(
+                              player.summoner2Id
+                            )}.png`}
+                            width={22.5}
+                            height={22.5}
+                            alt="Summoner Spell 2"
+                            className="rounded shadow"
+                          />
+                        </section>
+                        <section className="ml-1">
+                          <Image
+                            src={require(`../../../assets/perk-images/Styles/${rune1}.png`)}
+                            width={22.5}
+                            height={22.5}
+                            alt=""
+                            className="mb-1 rounded"
+                          />
+                          <Image
+                            src={require(`../../../assets/perk-images/Styles/${rune2}.png`)}
+                            width={22.5}
+                            height={22.5}
+                            alt=""
+                            className="rounded"
+                          />
+                        </section>
+                        <section></section>
+                      </div>
                     </div>
 
                     <div></div>
