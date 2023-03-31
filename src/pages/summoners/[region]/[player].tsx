@@ -211,6 +211,12 @@ export default function Player(props: Props) {
     return runeName;
   }
 
+  function getKda(player: any) {
+    const kda = (player.kills + player.assists) / player.deaths;
+
+    return kda.toFixed(2);
+  }
+
   return (
     <>
       <Head>
@@ -274,7 +280,7 @@ export default function Player(props: Props) {
                     <p>{match.info.gameMode}</p>
                     <p>{timeAgo}</p>
                     <div className="h-[1px] w-11 bg-gray-100" />
-                    <p>{isWin}</p>
+                    <p className="font-bold">{isWin}</p>
                     <p>{gameLength}</p>
                   </div>
 
@@ -297,17 +303,17 @@ export default function Player(props: Props) {
                             src={`http://ddragon.leagueoflegends.com/cdn/13.6.1/img/spell/${getSummonerSpell(
                               player.summoner1Id
                             )}.png`}
-                            width={22.5}
-                            height={22.5}
+                            width={23.5}
+                            height={23.5}
                             alt="Summoner Spell 1"
-                            className="mb-1 rounded shadow"
+                            className="mb-0.5 rounded shadow"
                           />
                           <Image
                             src={`http://ddragon.leagueoflegends.com/cdn/13.6.1/img/spell/${getSummonerSpell(
                               player.summoner2Id
                             )}.png`}
-                            width={22.5}
-                            height={22.5}
+                            width={23.5}
+                            height={23.5}
                             alt="Summoner Spell 2"
                             className="rounded shadow"
                           />
@@ -315,24 +321,81 @@ export default function Player(props: Props) {
                         <section className="ml-1">
                           <Image
                             src={require(`../../../assets/perk-images/Styles/${rune1}.png`)}
-                            width={22.5}
-                            height={22.5}
-                            alt=""
-                            className="mb-1 rounded"
+                            width={23.5}
+                            height={23.5}
+                            alt="Rune 1"
+                            className="mb-0.5 rounded-full bg-black"
                           />
                           <Image
                             src={require(`../../../assets/perk-images/Styles/${rune2}.png`)}
-                            width={22.5}
-                            height={22.5}
-                            alt=""
+                            width={23.5}
+                            height={23.5}
+                            alt="Rune 2"
                             className="rounded"
                           />
                         </section>
-                        <section></section>
+                        <section className="ml-3 flex flex-col justify-center text-sm text-gray-800">
+                          <p>
+                            {`${player.kills} / ${player.deaths} / ${player.assists}`}
+                          </p>
+                          <p className="text-xs text-gray-600">{`${getKda(
+                            player
+                          )}:1 KDA`}</p>
+                        </section>
                       </div>
                     </div>
 
-                    <div></div>
+                    <div className="mt-3 flex">
+                      <Image
+                        src={`http://ddragon.leagueoflegends.com/cdn/${patch}/img/item/${player.item0}.png`}
+                        width={23.5}
+                        height={23.5}
+                        alt="Item 1"
+                        className="mr-0.5 rounded"
+                      />
+                      <Image
+                        src={`http://ddragon.leagueoflegends.com/cdn/${patch}/img/item/${player.item1}.png`}
+                        width={23.5}
+                        height={23.5}
+                        alt="Item 2"
+                        className="mr-0.5 rounded"
+                      />
+                      <Image
+                        src={`http://ddragon.leagueoflegends.com/cdn/${patch}/img/item/${player.item2}.png`}
+                        width={23.5}
+                        height={23.5}
+                        alt="Item 3"
+                        className="mr-0.5 rounded"
+                      />
+                      <Image
+                        src={`http://ddragon.leagueoflegends.com/cdn/${patch}/img/item/${player.item3}.png`}
+                        width={23.5}
+                        height={23.5}
+                        alt="Item 4"
+                        className="mr-0.5 rounded"
+                      />
+                      <Image
+                        src={`http://ddragon.leagueoflegends.com/cdn/${patch}/img/item/${player.item4}.png`}
+                        width={23.5}
+                        height={23.5}
+                        alt="Item 5"
+                        className="mr-0.5 rounded"
+                      />
+                      <Image
+                        src={`http://ddragon.leagueoflegends.com/cdn/${patch}/img/item/${player.item5}.png`}
+                        width={23.5}
+                        height={23.5}
+                        alt="Item 6"
+                        className="mr-0.5 rounded"
+                      />
+                      <Image
+                        src={`http://ddragon.leagueoflegends.com/cdn/${patch}/img/item/${player.item6}.png`}
+                        width={23.5}
+                        height={23.5}
+                        alt="Item 7"
+                        className="rounded-full"
+                      />
+                    </div>
                   </div>
                 </div>
               );
@@ -385,10 +448,10 @@ export const getServerSideProps: GetServerSideProps = async context => {
   const res3 = await fetch(
     `https://${route}.api.riotgames.com/lol/match/v5/matches/by-puuid/${basicPlayerInfo.puuid}/ids?count=5&api_key=${process.env.RIOT_API_KEY}`
   );
-  const xMatchesId = (await res3.json()) as string[];
+  const xMatchesId = await res3.json();
 
   const matches = await Promise.all(
-    xMatchesId.map(async matchId => {
+    xMatchesId.map(async (matchId: any) => {
       const res3 = await fetch(
         `https://${route}.api.riotgames.com/lol/match/v5/matches/${matchId}?api_key=${process.env.RIOT_API_KEY}`
       );
