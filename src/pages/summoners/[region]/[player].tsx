@@ -290,13 +290,14 @@ export default function Player(props: Props) {
                 {basicPlayerInfo.summonerLevel}
               </span>
             </div>
-            <div className="m-4">
-              <p>{basicPlayerInfo.name}</p>
+            <div className="m-3">
+              <p className="text-lg font-bold">{basicPlayerInfo.name}</p>
               <p>{`${extraPlayerInfo[0].tier} ${extraPlayerInfo[0].rank} ${extraPlayerInfo[0].leaguePoints} LP`}</p>
               <p>{`${extraPlayerInfo[0].wins}W ${extraPlayerInfo[0].losses}L`}</p>
               <p>{`Win Rate ${winrate()}%`}</p>
             </div>
           </section>
+
           <section className="border border-white bg-violet-500/50 p-2">
             {matches.map((match, index) => {
               const player = findPlayer(match.info.participants);
@@ -316,23 +317,41 @@ export default function Player(props: Props) {
               const averageCs = getAverageCs(match.info, player);
               const killPercent = getKillPercent(match.info.teams, player);
 
-              // console.log(player.teamId); // 100 = blue team, 200 = red team
-              console.log(match.info);
+              const itemList = [
+                player.item0,
+                player.item1,
+                player.item2,
+                player.item3,
+                player.item4,
+                player.item5,
+                player.item6
+              ];
 
               return (
                 <div
                   key={index}
-                  className="mb-2 flex bg-blue-300"
+                  className={`${
+                    player.win ? "bg-blue-200/70" : "bg-red-200/70"
+                  } mb-2 flex rounded last:mb-0`}
                 >
+                  <div
+                    className={`${
+                      player.win ? "bg-blue-700" : "bg-red-700"
+                    } w-1.5 rounded-l`}
+                  />
                   <div className="my-auto w-[150px] p-2">
-                    <p className="font-bold text-gray-900">
+                    <p
+                      className={`${
+                        player.win ? "text-blue-700" : "text-red-700"
+                      } font-bold`}
+                    >
                       {match.info.gameMode}
                     </p>
                     <p className="relative bottom-1 text-sm text-gray-700">
                       {timeAgo}
                     </p>
                     <div className="mt-1 mb-1 h-[1px] w-11 bg-gray-100" />
-                    <p className="font-bold text-gray-900">{isWin}</p>
+                    <p className="font-bold text-gray-700">{isWin}</p>
                     <p className="relative bottom-1 text-sm text-gray-700">
                       {gameLength}
                     </p>
@@ -400,55 +419,29 @@ export default function Player(props: Props) {
                     </div>
 
                     <div className="mt-3 flex">
-                      <Image
-                        src={`http://ddragon.leagueoflegends.com/cdn/${patch}/img/item/${player.item0}.png`}
-                        width={23.5}
-                        height={23.5}
-                        alt="Item 1"
-                        className="mr-0.5 rounded"
-                      />
-                      <Image
-                        src={`http://ddragon.leagueoflegends.com/cdn/${patch}/img/item/${player.item1}.png`}
-                        width={23.5}
-                        height={23.5}
-                        alt="Item 2"
-                        className="mr-0.5 rounded"
-                      />
-                      <Image
-                        src={`http://ddragon.leagueoflegends.com/cdn/${patch}/img/item/${player.item2}.png`}
-                        width={23.5}
-                        height={23.5}
-                        alt="Item 3"
-                        className="mr-0.5 rounded"
-                      />
-                      <Image
-                        src={`http://ddragon.leagueoflegends.com/cdn/${patch}/img/item/${player.item3}.png`}
-                        width={23.5}
-                        height={23.5}
-                        alt="Item 4"
-                        className="mr-0.5 rounded"
-                      />
-                      <Image
-                        src={`http://ddragon.leagueoflegends.com/cdn/${patch}/img/item/${player.item4}.png`}
-                        width={23.5}
-                        height={23.5}
-                        alt="Item 5"
-                        className="mr-0.5 rounded"
-                      />
-                      <Image
-                        src={`http://ddragon.leagueoflegends.com/cdn/${patch}/img/item/${player.item5}.png`}
-                        width={23.5}
-                        height={23.5}
-                        alt="Item 6"
-                        className="mr-0.5 rounded"
-                      />
-                      <Image
-                        src={`http://ddragon.leagueoflegends.com/cdn/${patch}/img/item/${player.item6}.png`}
-                        width={23.5}
-                        height={23.5}
-                        alt="Item 7"
-                        className="rounded-full"
-                      />
+                      {itemList.map((item, index) =>
+                        item !== 0 ? (
+                          <Image
+                            key={index}
+                            src={`http://ddragon.leagueoflegends.com/cdn/${patch}/img/item/${item}.png`}
+                            width={23.5}
+                            height={23.5}
+                            alt={`Item ${index + 1}`}
+                            className={`mr-0.5 ${
+                              index === 6 ? "rounded-full" : "rounded"
+                            }`}
+                          />
+                        ) : (
+                          <div
+                            key={index}
+                            className={`${
+                              player.win ? "bg-blue-500" : "bg-red-500"
+                            } mr-0.5 h-[23.5px] w-[23.5px] ${
+                              index === 6 ? "rounded-full" : "rounded"
+                            }`}
+                          />
+                        )
+                      )}
                     </div>
                   </div>
                   <div className="mt-3 flex flex-col">
