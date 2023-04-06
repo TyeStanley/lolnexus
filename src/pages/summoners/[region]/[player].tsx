@@ -317,7 +317,7 @@ export default function Player(props: Props) {
               const killPercent = getKillPercent(match.info.teams, player);
 
               // console.log(player.teamId); // 100 = blue team, 200 = red team
-              // console.log(match.info.teams);
+              console.log(match.info);
 
               return (
                 <div
@@ -389,7 +389,7 @@ export default function Player(props: Props) {
                           />
                         </section>
                         <section className="ml-3 flex flex-col justify-center text-sm text-gray-900">
-                          <p>
+                          <p className="w-[75px]">
                             {`${player.kills} / ${player.deaths} / ${player.assists}`}
                           </p>
                           <p className="text-xs text-gray-700">{`${getKda(
@@ -463,6 +463,75 @@ export default function Player(props: Props) {
                     <p className="relative top-3.5 right-7 rounded-full bg-red-500 text-center text-sm text-white">
                       {multikill}
                     </p>
+                  </div>
+
+                  <div className="my-auto ml-7 flex">
+                    <div
+                      id="team1"
+                      className="flex w-[150px] flex-col"
+                    >
+                      {match.info.participants.map((participant, index) => {
+                        if (index < 5) {
+                          return (
+                            <div
+                              className="flex py-0.5"
+                              key={index}
+                            >
+                              <Image
+                                src={`http://ddragon.leagueoflegends.com/cdn/${patch}/img/champion/${participant.championName}.png`}
+                                width={15}
+                                height={15}
+                                alt="Champion"
+                                className="rounded"
+                              />
+                              <span
+                                className={`${
+                                  player.summonerName ===
+                                  participant.summonerName
+                                    ? "font-bold"
+                                    : ""
+                                } ml-1 text-xs text-gray-700`}
+                              >
+                                {participant.summonerName}
+                              </span>
+                            </div>
+                          );
+                        }
+                      })}
+                    </div>
+                    <div
+                      id="team2"
+                      className="flex w-[150px] flex-col"
+                    >
+                      {match.info.participants.map((participant, index) => {
+                        if (index > 4) {
+                          return (
+                            <div
+                              className="flex py-0.5"
+                              key={index}
+                            >
+                              <Image
+                                src={`http://ddragon.leagueoflegends.com/cdn/${patch}/img/champion/${participant.championName}.png`}
+                                width={15}
+                                height={15}
+                                alt="Champion"
+                                className="rounded"
+                              />
+                              <span
+                                className={`${
+                                  player.summonerName ===
+                                  participant.summonerName
+                                    ? "font-bold"
+                                    : ""
+                                } ml-1 text-xs text-gray-700`}
+                              >
+                                {participant.summonerName}
+                              </span>
+                            </div>
+                          );
+                        }
+                      })}
+                    </div>
                   </div>
                 </div>
               );
