@@ -41,6 +41,14 @@ type Props = {
             win: boolean;
           }
         ];
+        teams: [
+          {
+            bans: string[];
+            objectives: object;
+            teamId: number;
+            win: boolean;
+          }
+        ];
       };
     }
   ];
@@ -217,6 +225,39 @@ export default function Player(props: Props) {
     return kda.toFixed(2);
   }
 
+  function getMultiKill(player: any) {
+    if (player.pentaKills >= 1) {
+      return "Penta Kill";
+    } else if (player.quadraKills >= 1) {
+      return "Quadra Kill";
+    } else if (player.tripleKills >= 1) {
+      return "Triple Kill";
+    } else if (player.doubleKills >= 1) {
+      return "Double Kill";
+    } else {
+      return "";
+    }
+  }
+
+  function getAverageCs(info: any, player: any) {
+    const cs = player.totalMinionsKilled + player.neutralMinionsKilled;
+    const averageCs = cs / (info.gameDuration / 60);
+
+    return averageCs.toFixed(1);
+  }
+
+  function getKillPercent(teamArray: any, player: any) {
+    const currentTeam = teamArray.filter(
+      (team: any) => team.teamId === player.teamId
+    );
+
+    const totalTeamKills = currentTeam[0].objectives.champion.kills;
+    const playerTakedowns = player.kills + player.assists;
+    const killPercent = (playerTakedowns / totalTeamKills) * 100;
+
+    return killPercent.toFixed(0);
+  }
+
   return (
     <>
       <Head>
@@ -271,20 +312,33 @@ export default function Player(props: Props) {
               const rune1 = getRunes(runeSelection[0].selections[0].perk);
               const rune2 = getRunes(runeSelection[1].style);
 
+              const multikill = getMultiKill(player);
+              const averageCs = getAverageCs(match.info, player);
+              const killPercent = getKillPercent(match.info.teams, player);
+
+              // console.log(player.teamId); // 100 = blue team, 200 = red team
+              // console.log(match.info.teams);
+
               return (
                 <div
                   key={index}
                   className="mb-2 flex bg-blue-300"
                 >
-                  <div className="w-[150px] p-2">
-                    <p>{match.info.gameMode}</p>
-                    <p>{timeAgo}</p>
-                    <div className="h-[1px] w-11 bg-gray-100" />
-                    <p className="font-bold">{isWin}</p>
-                    <p>{gameLength}</p>
+                  <div className="my-auto w-[150px] p-2">
+                    <p className="font-bold text-gray-900">
+                      {match.info.gameMode}
+                    </p>
+                    <p className="relative bottom-1 text-sm text-gray-700">
+                      {timeAgo}
+                    </p>
+                    <div className="mt-1 mb-1 h-[1px] w-11 bg-gray-100" />
+                    <p className="font-bold text-gray-900">{isWin}</p>
+                    <p className="relative bottom-1 text-sm text-gray-700">
+                      {gameLength}
+                    </p>
                   </div>
 
-                  <div className="p-2">
+                  <div className="my-auto">
                     <div className="flex">
                       <Image
                         src={`http://ddragon.leagueoflegends.com/cdn/${patch}/img/champion/${player.championName}.png`}
@@ -297,7 +351,7 @@ export default function Player(props: Props) {
                         {player.champLevel}
                       </span>
 
-                      <div className="relative right-4 flex">
+                      <div className="relative right-4 mr-5 flex">
                         <section>
                           <Image
                             src={`http://ddragon.leagueoflegends.com/cdn/13.6.1/img/spell/${getSummonerSpell(
@@ -334,11 +388,11 @@ export default function Player(props: Props) {
                             className="rounded"
                           />
                         </section>
-                        <section className="ml-3 flex flex-col justify-center text-sm text-gray-800">
+                        <section className="ml-3 flex flex-col justify-center text-sm text-gray-900">
                           <p>
                             {`${player.kills} / ${player.deaths} / ${player.assists}`}
                           </p>
-                          <p className="text-xs text-gray-600">{`${getKda(
+                          <p className="text-xs text-gray-700">{`${getKda(
                             player
                           )}:1 KDA`}</p>
                         </section>
@@ -396,6 +450,19 @@ export default function Player(props: Props) {
                         className="rounded-full"
                       />
                     </div>
+                  </div>
+                  <div className="mt-3 flex flex-col">
+                    <div className="flex flex-col justify-center border border-transparent border-l-white pl-2">
+                      <p className="text-xs text-gray-700">{`P/Kill ${killPercent}%`}</p>
+                      <p className="text-xs text-gray-700">{`Control Ward ${player.visionWardsBoughtInGame}`}</p>
+                      <p className="text-xs text-gray-700">
+                        {`CS ${player.totalMinionsKilled} (${averageCs})`}
+                      </p>
+                    </div>
+
+                    <p className="relative top-3.5 right-7 rounded-full bg-red-500 text-center text-sm text-white">
+                      {multikill}
+                    </p>
                   </div>
                 </div>
               );
